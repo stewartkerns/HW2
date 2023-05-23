@@ -1,18 +1,44 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include <sstream>
 #include <cmath>
+#include <mutex>
 using namespace std;
 
 int minList, maxList, avgList;
 vector<int> * globalArray;
+int allowed_ID = 1;
+mutex mutexLock;
 
 
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 vector<int> * takeInput();
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void getAvg(vector<int>);
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void getMax(vector<int>);
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void getMin(vector<int>);
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void question1();
 
 // This method takes in an array and sorts it using a recursive merge sort
@@ -32,13 +58,36 @@ void sort(vector<int> *);
 // POST-CONDITION: first array contains the contents of the other two arrays
 // sorted in ascending order
 void merge(vector<int> *, vector<int> *, vector<int> *);
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void question2();
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
 void question3();
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
+void idChecker(int);
+
+//
+// PRE-CONDITION:
+// PROCESS:
+// POST-CONDITION
+
 
 int main() {
 //    question1();
 
-    question2();
+//    question2();
+question3();
     return 0;
 }
 
@@ -49,11 +98,9 @@ vector<int> * takeInput(){
     cout << "Please enter some fucking numbers: ";
     getline(cin, num);
     int count = 0, sum = 0;
-//    stringstream ss;
     bool negativeFlag = false;
 
     for (int i = 0; i < num.size(); i++) {
-//        cout << "Number being looked at " << num[i] << endl;
         if (num.at(i) == '-'){
             negativeFlag = true;
         }
@@ -61,7 +108,6 @@ vector<int> * takeInput(){
             stack.push_back(num[i] - 48);
         } else {
             if (stack.size() > 0) {
-                int test = stack.size();
                 for (int j = 0; j < stack.size(); j++) {
                     sum += stack[j] * (int) pow(10,
                                                 (double)(stack.size() - 1 - j));
@@ -76,7 +122,6 @@ vector<int> * takeInput(){
             negativeFlag = false;
         }
         if (i == num.size() - 1 && (num[i] > 47 && num[i] < 58)) {
-            int test = stack.size();
             for (int j = 0; j < stack.size(); j++) {
                 sum += stack[j] * (int) pow(10,
                                             (double) (stack.size() - 1 - j));
@@ -248,4 +293,40 @@ void merge(vector<int>* intArray, vector<int>* intArrLeft,
 
 void question3(){
 
+    const int ONE = 1, TWO = 2, THREE = 3;
+
+    thread t1(idChecker, ONE);
+    thread t2(idChecker, TWO);
+    thread t3(idChecker, THREE);
+
+    t1.join();
+    t2.join();
+    t3.join();
+
+}
+
+void idChecker(int id){
+
+    int count = 0;
+    const int MAX_TURNS = 2;
+
+    while (count < MAX_TURNS) {
+        if (allowed_ID == id) {
+            printf("Thread %d's turn.\n", id);
+            allowed_ID++;
+
+            if (allowed_ID > 3){
+                allowed_ID = 1;
+            }
+
+            count++;
+
+            if (count == MAX_TURNS){
+                printf("Thread %d's completed.\n", id);
+            }
+        }
+        else{
+            printf("Not thread %d's turn.\n", id);
+        }
+    }
 }
